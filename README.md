@@ -1,4 +1,6 @@
-# Fortune wheel in rust
+# CargoSpin
+
+A very simple cross-platform wheel of fortune made in Rust
 
 ## Requirements
 
@@ -20,3 +22,5 @@ To build the application into an executable file, run:
 ```cargo
 cargo build --release
 ```
+
+This will build the application for your current platform

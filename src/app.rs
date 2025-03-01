@@ -10,7 +10,7 @@ use eframe::{
 use egui::Key;
 use wheel::Wheel;
 
-pub struct MyApp {
+pub struct App {
     wheel: Wheel,
     input_text: String,
     wheel_choices: WheelChoices,
@@ -89,7 +89,7 @@ impl Choice {
     }
 }
 
-impl Default for MyApp {
+impl Default for App {
     fn default() -> Self {
         Self {
             wheel: Wheel::new(),
@@ -100,7 +100,7 @@ impl Default for MyApp {
     }
 }
 
-impl MyApp {
+impl App {
     fn can_add_segment(&self) -> bool {
         self.can_type_segment() && !self.input_text.is_empty()
     }
@@ -119,7 +119,7 @@ impl MyApp {
 }
 
 // Main loop
-impl eframe::App for MyApp {
+impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui: &mut egui::Ui| {
             let available_rect = ui.max_rect();

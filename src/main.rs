@@ -1,10 +1,10 @@
 #![windows_subsystem = "windows"]
 mod app;
 
-use crate::app::MyApp;
+use crate::app::App;
 use eframe::egui::{self, Vec2};
 
-const APP_TITLE: &str = "Fortune wheel";
+const APP_TITLE: &str = "CargoSpin";
 
 fn main() -> eframe::Result<()> {
     // Options
@@ -27,6 +27,6 @@ fn main() -> eframe::Result<()> {
     eframe::run_native(
         APP_TITLE,
         options,
-        Box::new(|_cc| Ok(Box::new(MyApp::default()))),
+        Box::new(|_cc| Ok(Box::new(App::default()))),
     )
 }

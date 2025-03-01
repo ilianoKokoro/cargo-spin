@@ -1,5 +1,5 @@
 [package]
-name = "fortune_wheel"
+name = "cargo_spin"
 version = "0.1.0"
 edition = "2021"
 
