@@ -1,0 +1,13 @@
+pub const SPACER_AMOUNT: f32 = 20.0;
+pub const TITLE_SIZE: f32 = 30.0;
+pub const MAX_CHOICES: usize = 75;
+pub const MAX_INPUT_SIZE: usize = 500;
+pub const WHEEL_OFFSET: f32 = 20.0;
+pub const STEPS: u8 = 200;
+pub const SPIN_VELOCITY_MIN: f32 = 0.4;
+pub const SPIN_VELOCITY_MAX: f32 = 0.6;
+pub const BREAKING_PERCENT: f32 = 0.995;
+pub const MIN_SPEED: f32 = 0.00020;
+pub const MAX_RANGE_TEXT_LENGTH: usize = 15;
+pub const MIN_TEXT_SIZE: usize = 15;
+pub const MAX_TEXT_SIZE: usize = 100;
