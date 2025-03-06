@@ -96,7 +96,7 @@ impl Wheel {
         self.spinning = true;
     }
 
-    pub fn draw(&mut self, painter: &Painter, choices: &mut Vec<Choice>) {
+    pub fn draw(&mut self, painter: &Painter, wheel_choices: &mut WheelChoices) {
         // Colors
         let colors = [
             Color32::from_rgb(51, 105, 232),
@@ -106,7 +106,7 @@ impl Wheel {
         ];
 
         // Error message
-        if choices.is_empty() {
+        if wheel_choices.choices.is_empty() {
             painter.text(
                 self.center,
                 Align2::CENTER_CENTER,
@@ -117,14 +117,20 @@ impl Wheel {
             return;
         }
 
-        let number_of_segments = choices.len();
-        let actual_steps = constants::STEPS / number_of_segments as u8;
-        let angle_step = 2.0 * PI / number_of_segments as f32;
+        let total_weight = Wheel::get_total_weight(&wheel_choices);
 
-        for (i, choice) in choices.iter_mut().enumerate() {
+        let number_of_segments = wheel_choices.choices.len();
+        let angle_step = 2.0 * PI / total_weight as f32;
+
+        let mut last_angle: f32 = self.rotation;
+
+        for (i, choice) in wheel_choices.choices.iter_mut().enumerate() {
+            let angle_occupied = angle_step * choice.weight as f32;
             // Start and end angle of the current segment
-            let start_angle = i as f32 * angle_step + self.rotation;
-            let end_angle = start_angle + angle_step;
+            let start_angle: f32 = last_angle;
+            let end_angle = start_angle + angle_occupied;
+
+            last_angle = end_angle;
 
             // Find the color of the segment
             // (Skip a color to prevent 2 from being next to each-other)
@@ -138,6 +144,9 @@ impl Wheel {
             let mut points = vec![self.center];
 
             let mut side_points: (Point, Point) = (Point::new(), Point::new());
+
+            let actual_steps: u8 =
+                ((constants::STEPS / total_weight as u8) * choice.weight as u8) as u8;
 
             for j in 0..=actual_steps as u8 {
                 let t: f32 = j as f32 / actual_steps as f32;
@@ -175,7 +184,7 @@ impl Wheel {
             painter.add(path);
 
             // Draw the text
-            let text_angle: f32 = start_angle + angle_step / 2.0;
+            let text_angle: f32 = start_angle + angle_occupied / 2.0;
             painter.add(Wheel::create_text_shape(
                 choice.label.to_owned(),
                 painter,
@@ -278,6 +287,14 @@ impl Wheel {
             angle: text_angle,
             ..TextShape::new(centered_point, galley, Color32::WHITE)
         }
+    }
+
+    fn get_total_weight(choices: &WheelChoices) -> u32 {
+        let mut total: u32 = 0;
+        for choice in choices.choices.iter() {
+            total += choice.weight;
+        }
+        total
     }
 }
 

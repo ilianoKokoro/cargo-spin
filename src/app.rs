@@ -22,6 +22,7 @@ struct Choice {
     id: u32,
     label: String,
     center: Pos2,
+    weight: u32,
 }
 
 struct WheelChoices {
@@ -85,6 +86,7 @@ impl Choice {
             id,
             label: label.to_string(),
             center: Pos2::new(0.0, 0.0),
+            weight: 1,
         }
     }
 }
@@ -138,7 +140,7 @@ impl eframe::App for App {
             let available_height = available_rect.height() / 2.0;
             self.wheel.radius = f32::min(available_width, available_height);
 
-            self.wheel.draw(painter, &mut self.wheel_choices.choices);
+            self.wheel.draw(painter, &mut self.wheel_choices);
 
             // Triangle
             if !self.wheel_choices.empty() {
