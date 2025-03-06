@@ -199,26 +199,25 @@ impl Wheel {
             return None;
         }
 
-        let total_weight = Wheel::get_total_weight(&wheel_choices);
-
-        let angle_step = 2.0 * PI / total_weight as f32;
-
+        let angle_step = 2.0 * PI / Wheel::get_total_weight(&wheel_choices) as f32;
         let mut last_angle: f32 = self.rotation;
-
-        let mut last_choice: Option<Choice> = wheel_choices.choices.last().cloned();
+        let mut minimum: Option<(Choice, f32)> = None;
 
         for choice in wheel_choices.choices.iter() {
-            let end_angle = last_angle + angle_step * choice.weight as f32;
+            let end_angle: f32 = last_angle + angle_step * choice.weight as f32;
+            let actual_end_angle = end_angle % (2.0 * PI);
 
-            if end_angle > self.rotation {
-                return last_choice;
+            if minimum.is_none() || actual_end_angle < minimum.clone().unwrap().1 {
+                minimum = Some((choice.clone(), actual_end_angle));
             }
 
             last_angle = end_angle;
-            last_choice = Some(choice.clone());
         }
 
-        None
+        match minimum {
+            None => None,
+            Some(choice) => Some(choice.0),
+        }
     }
 
     fn create_text_shape(
