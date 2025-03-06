@@ -163,16 +163,6 @@ impl Wheel {
             }
             let segment_width = side_points.0.distance_to(&side_points.1);
 
-            // Find the center of the segment
-            let mut x_sum = 0.0;
-            let mut y_sum = 0.0;
-            let point_amount = points.len() as f32;
-
-            for point in points.iter() {
-                x_sum += point.x;
-                y_sum += point.y;
-            }
-            choice.center = Pos2::new(x_sum / point_amount, y_sum / point_amount);
             points.push(self.center);
 
             // Draw the segment
@@ -204,24 +194,31 @@ impl Wheel {
         self.rotation = PI / choices.len() as f32
     }
 
-    fn get_winner(&self, choices: &WheelChoices) -> Option<Choice> {
+    fn get_winner(&self, wheel_choices: &WheelChoices) -> Option<Choice> {
         if self.spinning {
             return None;
         }
-        let triangle_center = Point::from(self.get_triangle_center());
 
-        let mut winner: Option<Choice> = None;
-        let mut min_distance: Option<f32> = None;
-        for segment in choices.choices.iter() {
-            let new_distance = Point::from(segment.center).distance_to(&triangle_center);
+        let total_weight = Wheel::get_total_weight(&wheel_choices);
 
-            if min_distance.is_none() || new_distance < min_distance.unwrap() {
-                min_distance = Some(new_distance);
-                winner = Some(segment.clone()); // Use a reference
+        let angle_step = 2.0 * PI / total_weight as f32;
+
+        let mut last_angle: f32 = self.rotation;
+
+        let mut last_choice: Option<Choice> = wheel_choices.choices.last().cloned();
+
+        for choice in wheel_choices.choices.iter() {
+            let end_angle = last_angle + angle_step * choice.weight as f32;
+
+            if end_angle > self.rotation {
+                return last_choice;
             }
+
+            last_angle = end_angle;
+            last_choice = Some(choice.clone());
         }
 
-        winner
+        None
     }
 
     fn create_text_shape(

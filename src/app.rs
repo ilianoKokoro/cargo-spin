@@ -21,7 +21,6 @@ pub struct App {
 struct Choice {
     id: u32,
     label: String,
-    center: Pos2,
     weight: u32,
 }
 
@@ -85,7 +84,6 @@ impl Choice {
         Self {
             id,
             label: label.to_string(),
-            center: Pos2::new(0.0, 0.0),
             weight: 1,
         }
     }
