@@ -11,3 +11,4 @@ pub const MIN_SPEED: f32 = 0.00020;
 pub const MAX_RANGE_TEXT_LENGTH: usize = 15;
 pub const MIN_TEXT_SIZE: usize = 15;
 pub const MAX_TEXT_SIZE: usize = 100;
+pub const MAX_SEGMENT_WEIGHT: u32 = 99;

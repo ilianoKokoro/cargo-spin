@@ -24,6 +24,7 @@ impl ChoiceList {
         wheel_choices: &mut WheelChoices,
         wheel: &mut Wheel,
     ) {
+        let enabled = !wheel.spinning;
         let modal = Modal::new(ctx, "my_dialog");
 
         modal.show(|ui| {
@@ -38,10 +39,6 @@ impl ChoiceList {
                                 .char_limit(constants::MAX_INPUT_SIZE)
                                 .desired_rows(1),
                         )
-
-                        // if ctx.input(|i| i.key_pressed(Key::Enter)) {
-                        //     wheel_choices.rename_choice(id.clone(), String::from("omegalul"));
-                        // }
                     })
             });
 
@@ -60,11 +57,11 @@ impl ChoiceList {
             .show(ui, |ui| {
                 let mut choice_to_remove: Option<Choice> = None;
 
-                for choice in wheel_choices.choices.iter() {
-                    ui.horizontal(|ui| {
-                        let buttons_width: f32 = ui.spacing().interact_size.x * 2.0;
-                        let available_width: f32 = ui.available_width() - buttons_width;
+                let buttons_width: f32 = ui.spacing().interact_size.x * 4.0;
+                let available_width: f32 = ui.available_width() - buttons_width;
 
+                for choice in wheel_choices.choices.iter_mut() {
+                    ui.horizontal(|ui| {
                         Frame::default()
                             .fill(ui.style().visuals.widgets.active.bg_fill)
                             .rounding(Rounding::same(4.0))
@@ -79,13 +76,32 @@ impl ChoiceList {
                                 );
                             });
 
-                        if ui.button("✏").on_hover_text("Edit").clicked() {
+                        ui.add(Label::new(format!("Weight : {}", choice.weight)));
+
+                        if ui
+                            .add_enabled(
+                                enabled && choice.weight < constants::MAX_SEGMENT_WEIGHT,
+                                egui::Button::new("+"),
+                            )
+                            .clicked()
+                        {
+                            choice.weight += 1;
+                        }
+
+                        if ui
+                            .add_enabled(enabled && choice.weight > 1, egui::Button::new("-"))
+                            .clicked()
+                        {
+                            choice.weight -= 1;
+                        }
+
+                        if ui.add_enabled(enabled, egui::Button::new("✏")).clicked() {
                             self.choice_to_rename = Some(choice.clone());
                             self.rename_input = choice.label.clone();
                             modal.open();
                         }
 
-                        if ui.button("🗑").on_hover_text("Remove").clicked() {
+                        if ui.add_enabled(enabled, egui::Button::new("🗑")).clicked() {
                             choice_to_remove = Some(choice.clone());
                         }
                     });
